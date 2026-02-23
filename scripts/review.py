@@ -23,9 +23,54 @@ def get_pr_diff():
     
     return "\n".join(changes), pr
 
+# def call_qwen_api(code_context):
+#     """Mengirim kode ke Qwen API"""
+#     url = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+    
+#     prompt = f"""
+#     Anda adalah Senior Code Reviewer yang ahli. 
+#     Tugas Anda adalah me-review kode berikut dari sebuah Pull Request.
+    
+#     Fokus pada:
+#     1. Bug potensial.
+#     2. Keamanan (Security vulnerabilities).
+#     3. Best practices & Clean Code.
+#     4. Saran perbaikan spesifik.
+    
+#     Jika kode sudah bagus, katakan "LGTM (Looks Good To Me)".
+#     Jika ada masalah, jelaskan secara rinci dan berikan contoh kode perbaikan.
+    
+#     Kode yang di-review:
+#     {code_context}
+#     """
+
+#     headers = {
+#         "Authorization": f"Bearer {QWEN_API_KEY}",
+#         "Content-Type": "application/json"
+#     }
+    
+#     payload = {
+#         "model": QWEN_MODEL,
+#         "input": {
+#             "messages": [
+#                 {"role": "system", "content": "You are a helpful code review assistant."},
+#                 {"role": "user", "content": prompt}
+#             ]
+#         }
+#     }
+
+#     response = requests.post(url, headers=headers, json=payload)
+#     if response.status_code == 200:
+#         result = response.json()
+#         return result['output']['text']
+#     else:
+#         return f"Error calling Qwen API: {response.status_code} - {response.text}"
+
 def call_qwen_api(code_context):
-    """Mengirim kode ke Qwen API"""
-    url = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+    """Mengirim kode ke Qwen API (International Endpoint)"""
+    
+    # URL International + OpenAI Compatible Mode
+    url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"
     
     prompt = f"""
     Anda adalah Senior Code Reviewer yang ahli. 
@@ -49,23 +94,25 @@ def call_qwen_api(code_context):
         "Content-Type": "application/json"
     }
     
+    # Format OpenAI-compatible (bukan native DashScope)
     payload = {
-        "model": QWEN_MODEL,
-        "input": {
-            "messages": [
-                {"role": "system", "content": "You are a helpful code review assistant."},
-                {"role": "user", "content": prompt}
-            ]
-        }
+        "model": "qwen-turbo",  # atau qwen-plus, qwen-max
+        "messages": [
+            {"role": "system", "content": "You are a helpful code review assistant."},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.2
     }
 
     response = requests.post(url, headers=headers, json=payload)
     if response.status_code == 200:
         result = response.json()
-        return result['output']['text']
+        # Format response juga beda di compatible mode
+        return result['choices'][0]['message']['content']
     else:
         return f"Error calling Qwen API: {response.status_code} - {response.text}"
-
+    
+    
 def post_comment(pr, review_text):
     """Memposting hasil review ke GitHub PR"""
     try:
