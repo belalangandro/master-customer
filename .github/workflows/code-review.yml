@@ -4,12 +4,19 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
 jobs:
   review:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3 
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Penting untuk mendapatkan diff yang lengkap
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -26,4 +33,4 @@ jobs:
           QWEN_API_KEY: ${{ secrets.QWEN_API_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/review.py 
+        run: python scripts/review.py
