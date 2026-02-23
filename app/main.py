@@ -8,5 +8,5 @@ async def read_root():
 
 @app.get("/customers/{customer_id}")
 async def get_customer(customer_id: int):
-    # Ini sengaja dibuat agak sederhana untuk nanti di-review oleh Qwen
+    # Ini sengaja dibuat agak sederhana untuk nanti di-review oleh Qwen 
     return {"customer_id": customer_id, "name": "John Doe"}

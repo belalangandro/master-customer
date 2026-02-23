@@ -86,7 +86,7 @@ def main():
         print("Tidak ada perubahan kode untuk di-review.")
         return
 
-    # Batasi panjang karakter jika terlalu besar (untuk menghemat token)
+    # Batasi panjang karakter jika terlalu besar (untuk menghemat token) 
     if len(diff_content) > 15000:
         diff_content = diff_content[:15000] + "\n...(truncated due to length)"
 
