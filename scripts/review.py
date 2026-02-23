@@ -92,7 +92,7 @@ def main():
 
     print("Mengirim ke Qwen API...")
     review_result = call_qwen_api(diff_content)
-    
+     
     print("Memposting komentar...")
     post_comment(pr, review_result)
 
