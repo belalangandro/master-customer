@@ -26,4 +26,4 @@ jobs:
           QWEN_API_KEY: ${{ secrets.QWEN_API_KEY }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
-        run: python scripts/review.py
+        run: python scripts/review.py 
